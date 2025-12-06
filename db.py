@@ -31,7 +31,7 @@ def vytvorenie_tabulky(conn):
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 nazov VARCHAR(255) NOT NULL,
                 popis TEXT,
-                stav ENUM('nezahájeno', 'hotovo', 'probíhá') NOT NULL DEFAULT 'nezahájeno',
+                stav ENUM('nezahájené', 'hotovo', 'prebieha') NOT NULL DEFAULT 'nezahájené',
                 datum_vytvorenia DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
         ''')
@@ -72,6 +72,27 @@ def pridat_ulohu(conn):
         except mysql.connector.Error as err:
             print(f"Chyba pri pridávaní úlohy: {err}")
             break
+
+
+# 04. Zobrazenie úloh
+
+def zobrazit_ulohy(conn):
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            SELECT id, nazov, popis, stav FROM ulohy
+            WHERE stav IN ('nezahájené', 'prebieha')
+        """)
+        ulohy = cursor.fetchall()
+        if not ulohy:
+            print("Žiadne úlohy k zobrazeniu.")
+        else:
+            print("Zoznam úloh :")
+            for uloha in ulohy:
+                print(f"ID: {uloha[0]}, Názov: {uloha[1]}, Popis: {uloha[2]}, Stav: {uloha[3]}")
+    except mysql.connector.Error as err:
+            print(f"Chyba pri načítávaní úloh: {err}")
+
 
 # uzavrenie kurzoru po pripojení
     cursor.close()
