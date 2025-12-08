@@ -94,6 +94,35 @@ def zobrazit_ulohy(conn):
             print(f"Chyba pri načítávaní úloh: {err}")
 
 
+# 6. Aktualizácia stavu úlohy
+def aktualizovat_ulohu(conn):
+    zobrazit_ulohy(conn)
+    cursor = conn.cursor()
+    try:
+        id_ulohy = int(input("Zadejte ID úlohy, kterú chcete aktualizovať:\n "))
+        novy_stav = input("Zadejte nový stav (prebieha/hotovo):\n ").strip().lower()
+        if novy_stav not in ['prebieha', 'hotovo']:
+            print("Neplatný stav.")
+            return
+
+        cursor.execute("SELECT id FROM ulohy WHERE id = %s", (id_ulohy,))
+        if cursor.fetchone() is None:
+            print("Zadané ID úlohy neexistuje.")
+            return
+
+        cursor.execute(
+            "UPDATE ulohy SET stav = %s WHERE id = %s",
+            (novy_stav, id_ulohy)
+        )
+        conn.commit()
+        print("Úloha bola aktualizovaná.")
+    except ValueError:
+        print("Zadejte platné číselné ID.")
+    except mysql.connector.Error as err:
+            print(f"Chyba pri aktualizácii úlohy: {err}")
+
+
+
 # uzavrenie kurzoru po pripojení
     cursor.close()
     conn.close()
