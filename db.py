@@ -123,7 +123,58 @@ def aktualizovat_ulohu(conn):
 
 
 
-# uzavrenie kurzoru po pripojení
-    cursor.close()
-    conn.close()
-    print("Pripojenie k databáze bolo uzavrené.")
+# 7. odstránenie úlohy
+
+def odstranit_ulohu(conn):
+    zobrazit_ulohy(conn)
+    cursor = conn.cursor()
+    try:
+        id_ulohy = int(input("Zadejte ID úlohy, kterú chcete odstrániť:\n "))
+        cursor.execute("SELECT id FROM ulohy WHERE id = %s", (id_ulohy,))
+        if cursor.fetchone() is None:
+            print("Zadané ID úlohy neexistuje.")
+            return
+
+        cursor.execute("DELETE FROM ulohy WHERE id = %s", (id_ulohy,))
+        conn.commit()
+        print("Úloha bola odstránená.")
+    except ValueError:
+        print("Zadejte platné číselné ID.")
+    except mysql.connector.Error as err:
+            print(f"Chyba pri odstranovaní úlohy: {err}")
+
+
+# 3. Hlavn nabídka
+def hlavni_menu(conn):
+    while True:
+        print("\nSprávce úloh- Hlavné menu")
+        print("1. Přidat úlohu")
+        print("2. Zobraziť úlohy")
+        print("3. Aktualizovať úlohu")
+        print("4. Odstrániť úlohu")
+        print("5. Ukončit program")
+
+        volba = input("Vyberte možnosť (1-5):\n ").strip()
+        if volba == "1":
+            pridat_ulohu(conn)
+        elif volba == "2":
+            zobrazit_ulohy(conn)
+        elif volba == "3":
+            aktualizovat_ulohu(conn)
+        elif volba == "4":
+            odstranit_ulohu(conn)
+        elif volba == "5":
+            print("Koniec programu.")
+            break
+        else:
+            print("Neplatná voľba. Zadejte prosím číslo od 1 do 5.")
+
+# Spuštění programu
+if __name__ == "__main__":
+    conn = pripojenie_db()
+    if conn:
+        vytvorenie_tabulky(conn)
+        hlavni_menu(conn)
+        conn.close()
+
+
