@@ -38,7 +38,7 @@ def vytvorenie_tabulky(conn):
 
     # Uloženie zmien (Dôležité)
         conn.commit()
-        print("Tabuľka 'testovacia_tabulka' bola vytvorená.")
+        print("Tabuľka 'ulohy' bola vytvorená.")
     except mysql.connector.Error as err:
         print(f"Chyba pri vytváraní tabuľky: {err}")
 
@@ -147,8 +147,8 @@ def odstranit_ulohu(conn):
 # 3. Hlavn nabídka
 def hlavni_menu(conn):
     while True:
-        print("\nSprávce úloh- Hlavné menu")
-        print("1. Přidat úlohu")
+        print("\nSprávca úloh - Hlavné menu")
+        print("1. Přidať úlohu")
         print("2. Zobraziť úlohy")
         print("3. Aktualizovať úlohu")
         print("4. Odstrániť úlohu")
