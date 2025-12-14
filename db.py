@@ -6,6 +6,9 @@ from datetime import datetime
 load_dotenv() # spustenie modulu
 
 
+
+
+
 # 01. pripojenie databázy / servera
 def pripojenie_db():
     try:
@@ -13,12 +16,28 @@ def pripojenie_db():
             host=os.getenv("DB_HOST"),
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME")
         )
         return conn
     except mysql.connector.Error as err:
         print(f"Chyba spojenia: {err}")
         exit()  # Pokiaľ sa nepripojí, vypíše sa chybová hláška a program sa zavrie
+
+
+def vytvorenie_databazy():
+    conn = pripojenie_db()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("CREATE DATABASE IF NOT EXISTS task_manager")
+        conn.commit()
+        print("Databáza 'task_manager' je pripravená.")
+    except mysql.connector.Error as err:
+        print(f"Chyba pri vytváraní databázy: {err}")
+        exit()
+    finally:
+        cursor.close()
+        conn.close()
+
 
 
 
@@ -145,7 +164,7 @@ def odstranit_ulohu(conn):
 
 
 # 3. Hlavn nabídka
-def hlavni_menu(conn):
+def hlavne_menu(conn):
     while True:
         print("\nSprávca úloh - Hlavné menu")
         print("1. Přidať úlohu")
@@ -156,7 +175,7 @@ def hlavni_menu(conn):
 
         volba = input("Vyberte možnosť (1-5):\n ").strip()
         if volba == "1":
-            pridat_ulohu(conn)
+            pridat_ulohu(conn) 
         elif volba == "2":
             zobrazit_ulohy(conn)
         elif volba == "3":
@@ -171,10 +190,11 @@ def hlavni_menu(conn):
 
 # Spuštění programu
 if __name__ == "__main__":
+    vytvorenie_databazy()
     conn = pripojenie_db()
     if conn:
         vytvorenie_tabulky(conn)
-        hlavni_menu(conn)
+        hlavne_menu(conn)
         conn.close()
 
 
